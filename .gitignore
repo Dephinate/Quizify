@@ -6,3 +6,6 @@ ai-data.json
 
 # Tasks
 *_solution.py
+
+# API Key
+gcp_api_key.json
