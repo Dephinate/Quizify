@@ -47,15 +47,25 @@ class DocumentProcessor:
             # Allow only type `pdf`
             # Allow multiple PDFs for ingestion
             #####################################
+            label = "Upload yor PDFs here",
+            type = "pdf",
+            accept_multiple_files = True
+            
         )
-        
+
         if uploaded_files is not None:
             for uploaded_file in uploaded_files:
                 # Generate a unique identifier to append to the file's original name
                 unique_id = uuid.uuid4().hex
+                # todo: delete print
+                # print("uploaded_file: ",uploaded_file)
+
                 original_name, file_extension = os.path.splitext(uploaded_file.name)
                 temp_file_name = f"{original_name}_{unique_id}{file_extension}"
                 temp_file_path = os.path.join(tempfile.gettempdir(), temp_file_name)
+
+                # todo: delete print
+                # print("temp_file_path: ",temp_file_path)
 
                 # Write the uploaded PDF to a temporary file
                 with open(temp_file_path, 'wb') as f:
@@ -66,9 +76,17 @@ class DocumentProcessor:
                 # Use PyPDFLoader here to load the PDF and extract pages.
                 # https://python.langchain.com/docs/modules/data_connection/document_loaders/pdf#using-pypdf
                 # You will need to figure out how to use PyPDFLoader to process the temporary file.
+
+                loader = PyPDFLoader(temp_file_path)
+                pages = loader.load()
+                # todo: delete print
+                # print(len(pages))
+
+                st.write(f"Processed {len(pages)} pages for {uploaded_file.name}")
                 
                 # Step 3: Then, Add the extracted pages to the 'pages' list.
                 #####################################
+                self.pages.extend(pages)
                 
                 # Clean up by deleting the temporary file.
                 os.unlink(temp_file_path)
