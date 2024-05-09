@@ -72,6 +72,7 @@ class QuizGenerator:
         """
         self.llm = VertexAI(
             ############# YOUR CODE HERE ############
+            model_name="gemini-pro"
         )
         
     def generate_question_with_vectorstore(self):
@@ -101,19 +102,30 @@ class QuizGenerator:
         """
         ############# YOUR CODE HERE ############
         # Initialize the LLM from the 'init_llm' method if not already initialized
+        # todo: Why are we initializing llm every time we are generating a quiz
+        if not self.llm:
+            try:
+                self.init_llm()
+            except Exception as e:
+                raise Exception("Sorry, couldn't initialize LLM.") from e
+
         # Raise an error if the vectorstore is not initialized on the class
         ############# YOUR CODE HERE ############
+        if not self.vectorstore:
+            raise ValueError('Vectorstore not initialized properly')
         
         from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 
         ############# YOUR CODE HERE ############
         # Enable a Retriever using the as_retriever() method on the VectorStore object
+        retriever = self.vectorstore.db.as_retriever(search_kwargs={"k": 4})
         # HINT: Use the vectorstore as the retriever initialized on the class
         ############# YOUR CODE HERE ############
         
         ############# YOUR CODE HERE ############
         # Use the system template to create a PromptTemplate
         # HINT: Use the .from_template method on the PromptTemplate class and pass in the system template
+        PROMPT = PromptTemplate.from_template(self.system_template)
         ############# YOUR CODE HERE ############
         
         # RunnableParallel allows Retriever to get relevant documents
@@ -125,6 +137,7 @@ class QuizGenerator:
         ############# YOUR CODE HERE ############
         # Create a chain with the Retriever, PromptTemplate, and LLM
         # HINT: chain = RETRIEVER | PROMPT | LLM 
+        chain = setup_and_retrieval | PROMPT | self.llm
         ############# YOUR CODE HERE ############
 
         # Invoke the chain with the topic as input
@@ -141,7 +154,7 @@ if __name__ == "__main__":
     
     embed_config = {
         "model_name": "textembedding-gecko@003",
-        "project": "YOUR-PROJECT-ID-HERE",
+        "project": "rich-agency-421922",
         "location": "us-central1"
     }
     
