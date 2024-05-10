@@ -86,7 +86,7 @@ class QuizGenerator:
         from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 
         # Enable a Retriever
-        retriever = self.vectorstore.db.as_retriever()
+        retriever = self.vectorstore.as_retriever()
         
         # Use the system template to create a PromptTemplate
         prompt = PromptTemplate.from_template(self.system_template)
@@ -125,9 +125,9 @@ class QuizGenerator:
 
         for _ in range(self.num_questions):
             ##### YOUR CODE HERE #####
+
             retry = 4
-            for i in range(retry):
-                print("Try ",i)
+            for _ in range(retry):
                 # Use class method to generate question
                 question_str = self.generate_question_with_vectorstore()
                 ##### YOUR CODE HERE #####
@@ -145,13 +145,11 @@ class QuizGenerator:
                     print("Successfully generated unique question")
                     # Add the valid and unique question to the bank
                     self.question_bank.append(question)
-                    break
                 else:
                     print("Duplicate or invalid question detected.")
-                    continue
                 ##### YOUR CODE HERE #####
 
-        return self.question_bank        
+        return self.question_bank
 
     def validate_question(self, question: dict) -> bool:
         """
@@ -175,15 +173,9 @@ class QuizGenerator:
         """
         ##### YOUR CODE HERE #####
         # Consider missing 'question' key as invalid in the dict object
-        if 'question' in question:
-            for qn in self.question_bank:
-                if question['question']==qn['question']:
-                    return False
-            return True
-        else :
-            return False
         # Check if a question with the same text already exists in the self.question_bank
         ##### YOUR CODE HERE #####
+        return is_unique
 
 
 # Test Generating the Quiz
@@ -191,7 +183,7 @@ if __name__ == "__main__":
     
     embed_config = {
         "model_name": "textembedding-gecko@003",
-        "project": "rich-agency-421922",
+        "project": "YOUR-PROJECT-ID-HERE",
         "location": "us-central1"
     }
     
@@ -224,7 +216,7 @@ if __name__ == "__main__":
                 # Test the Quiz Generator
                 generator = QuizGenerator(topic_input, questions, chroma_creator)
                 question_bank = generator.generate_quiz()
-                question = question_bank
+                question = question_bank[0]
 
     if question_bank:
         screen.empty()

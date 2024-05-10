@@ -59,9 +59,9 @@ class ChromaCollectionCreator:
         # [Your code here for splitting documents]
 
         text_splitter = CharacterTextSplitter(
-            separator="\n",
-            chunk_size=200,
-            chunk_overlap=5,
+            separator=".",
+            chunk_size=300,
+            chunk_overlap=20,
             length_function=len,
             is_separator_regex=False,
         )

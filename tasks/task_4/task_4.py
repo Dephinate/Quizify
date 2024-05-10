@@ -1,5 +1,5 @@
 # embedding_client.py
-
+import streamlit as st
 from langchain_google_vertexai import VertexAIEmbeddings
 
 class EmbeddingClient:
@@ -71,5 +71,8 @@ if __name__ == "__main__":
     embedding_client = EmbeddingClient(model_name, project, location)
     vectors = embedding_client.embed_query("Hello World!")
     if vectors:
+        st.header('Test Embeddings API')
         print(vectors)
+        st.subheader('Hello World Embedding')
+        st.write(vectors)
         print("Successfully used the embedding client!")
